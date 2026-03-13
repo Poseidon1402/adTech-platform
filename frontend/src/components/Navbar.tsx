@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom';
 
 const links = [
   { to: '/campaigns', label: 'Campaigns' },
-  { to: '/campaigns/new', label: 'New Campaign' },
+  { to: '/campaigns/new', label: 'New campaign' },
   { to: '/dashboard', label: 'Dashboard' },
 ];
 
@@ -16,6 +16,7 @@ export default function Navbar() {
             <NavLink
               key={to}
               to={to}
+              end={to === '/campaigns'}
               className={({ isActive }) =>
                 `text-sm font-medium transition-colors ${
                   isActive ? 'text-blue-600' : 'text-gray-500 hover:text-gray-900'
