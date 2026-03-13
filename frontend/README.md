@@ -1,73 +1,134 @@
-# React + TypeScript + Vite
+# AdTech Campaign Manager - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend application for the technical exercise "Fullstack React / Node.js".
 
-Currently, two official plugins are available:
+This app provides the UI to manage ad campaigns and visualize platform statistics.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Objective
 
-## React Compiler
+Build a simple React interface connected to the backend API to cover the required product flows:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- List campaigns with key business fields
+- Create a campaign with form validation
+- Display dashboard statistics
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router
+- Axios
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Implemented Requirements Mapping
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+The following requirements from the exercise are implemented:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Page 1 - Campaign list
+  - Displays name, advertiser, status, impressions, budget
+  - Adds useful filters: status, advertiser, country
+- Page 2 - Campaign creation
+  - Full form with client-side validation
+  - Server validation errors are surfaced in the UI
+- Page 3 - Stats dashboard
+  - Displays active campaigns, total impressions, top advertiser
+- Frontend architecture
+  - Clean separation between pages, components, API client, and shared types
+
+## Project Structure
+
+```text
+src/
+  api/
+    client.ts                # Axios instance (base URL from env)
+  components/
+    Navbar.tsx               # Main navigation
+  pages/
+    CampaignList.tsx         # Campaign listing + filters
+    CreateCampaign.tsx       # Campaign creation form + validation
+    Dashboard.tsx            # Stats dashboard
+  types/
+    campaign.ts              # Campaign and status types
+    stats.ts                 # Stats response type
+  App.tsx                    # Routes and page layout
+  main.tsx                   # App bootstrap
+  index.css                  # Tailwind entry
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Routes
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- `/campaigns` -> Campaign list page
+- `/campaigns/new` -> Create campaign page
+- `/dashboard` -> Statistics dashboard
+- `/` -> Redirects to `/campaigns`
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Backend API Integration
+
+The frontend uses these backend endpoints:
+
+- `GET /campaigns`
+  - Used by `CampaignList.tsx`
+  - Supports query filters: `status`, `advertiser`, `country`
+- `POST /campaigns`
+  - Used by `CreateCampaign.tsx`
+  - Sends form payload after client validation
+- `GET /stats`
+  - Used by `Dashboard.tsx`
+  - Renders summary cards
+
+## Environment Variables
+
+Create `frontend/.env`:
+
+```env
+VITE_API_URL=http://localhost:5000
+```
+
+`VITE_API_URL` is consumed in `src/api/client.ts`.
+
+## Local Setup
+
+1. Install dependencies:
+
+```bash
+cd frontend
+npm install
+```
+
+2. Run dev server:
+
+```bash
+npm run dev
+```
+
+3. Start backend in a separate terminal:
+
+```bash
+cd backend
+npm run dev
+```
+
+## UX and Validation Notes
+
+- Campaign form validations:
+  - Required fields (name, advertiser, dates, budget, target countries)
+  - `endDate` must be after `startDate`
+  - Budget must be a positive number
+  - Countries must be 2-letter ISO codes
+- Loading and error states are handled on all pages
+- The navbar uses exact route matching for `/campaigns` to avoid double-active links when visiting `/campaigns/new`
+
+## Known Limitations and Next Improvements
+
+- No campaign edit flow yet (`PATCH /campaigns/:id` not implemented in frontend)
+- No dedicated UI for `POST /serve-ad` simulation
+- No global toast/notification system yet
+- No automated frontend tests yet
+
+## Build
+
+```bash
+npm run build
+npm run preview
 ```
